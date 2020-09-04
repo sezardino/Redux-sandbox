@@ -3,7 +3,7 @@ const initialState = 0;
 const ActionCreator = {
 	inc: () => ({type: 'INC'}),
 	dec: () => ({type: 'DEC'}),
-	rnd: (payload) => ({type: 'RND', payload}),
+	rnd: () => ({type: 'RND', payload: Math.floor(Math.random() * 10)}),
 };
 
 const reducer = (state = initialState, action) => {
