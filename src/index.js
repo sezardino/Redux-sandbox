@@ -1,37 +1,27 @@
-import {createStore} from 'redux';
-
-const initialState = 0;
-
-const reducer = (state = initialState, action) => {
-	switch (action.type) {
-		case 'INC':
-			return state + 1;
-		case 'DEC':
-			return state - 1;
-		case 'RND':
-			return state - action.payload;
-
-		default:
-			return state;
-	}
-};
+import React from 'react';
+import ReactDom from 'react-dom';
+import {createStore, bindActionCreators} from 'redux';
+import reducer, {ActionCreator} from './reducer';
+import Counter from './counter';
 
 const store = createStore(reducer);
+const {dispatch} = store;
+const {inc, dec, rnd} = bindActionCreators(ActionCreator, dispatch);
 
-const incButton = document.querySelector('#inc');
-const decButton = document.querySelector('#dec');
-const rndButton = document.querySelector('#rnd');
-const counter = document.querySelector('#counter');
+const update = () => {
+	ReactDom.render(
+		<Counter
+			count={store.getState()}
+			inc={inc}
+			dec={dec}
+			rnd={() => {
+				const payload = Math.floor(Math.random() * 10);
+				rnd(payload);
+			}}
+		/>,
+		document.querySelector('#root')
+	);
+};
 
-store.subscribe(() => (counter.textContent = store.getState()));
-
-incButton.addEventListener('click', () => {
-	store.dispatch({type: 'INC'});
-});
-decButton.addEventListener('click', () => {
-	store.dispatch({type: 'DEC'});
-});
-rndButton.addEventListener('click', () => {
-	const payload = Math.floor(Math.random() * 10);
-	store.dispatch({type: 'RND', payload});
-});
+update();
+store.subscribe(update);
